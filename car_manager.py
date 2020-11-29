@@ -1,16 +1,18 @@
 import random
 from player import FINISH_LINE_Y, STARTING_POSITION
 from turtle import Turtle
+import numpy as np
 
-COLORS = ["red", "orange", "yellow", "green", "blue", "purple"]
+COLORS = ["gold1", "red3", "SpringGreen1", "VioletRed", "OliveDrab1", "aquamarine", "purple"]
 STARTING_MOVE_DISTANCE = 5
 MOVE_INCREMENT = 10
 ROAD = FINISH_LINE_Y - STARTING_POSITION[1]
 LANE_HEIGHT = 20
 LANES_DISTANCE = 10
 LANE_START_X = 300
+FREE_LANE_X = 260
 NEW_CARS_RATE = (0, 5)
-NEW_CAR_CHANCES = 0.2
+NEW_CAR_CHANCES = 0.10
 
 
 class CarManager():
@@ -33,9 +35,17 @@ class CarManager():
             self.lanes.append(lane_y)
 
 
+    def is_lane_free(self):
+        self.busy_lanes = []
+        for car in self.cars:
+            if car.xcor() > FREE_LANE_X:
+                self.busy_lanes.append(car.ycor())
+
+
     def make_cars(self):
         if random.random() < NEW_CAR_CHANCES:
-            self.cars.append(Car(self.lanes))
+            free_lanes = np.setdiff1d(self.lanes, self.busy_lanes)
+            self.cars.append(Car(free_lanes))
 
 
     def move_cars(self):
@@ -70,4 +80,4 @@ class Car(Turtle):
         self.penup()
         self.shape("square")
         self.shapesize(1,2)
-        self.color = random.choice(COLORS)
+        self.color(random.choice(COLORS))
