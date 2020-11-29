@@ -34,6 +34,8 @@ while game_is_on:
     for car in car_manager.cars:
         if car.distance(player) < 20:
             player.reposition()
-            player.lose_life()
-            if player.lives <= 0:
+            scoreboard.lose_life()
+            if scoreboard.lives <= 0:
                 game_is_on = False
+
+screen.exitonclick()
