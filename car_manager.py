@@ -22,14 +22,14 @@ class CarManager():
         self.make_lanes()
         self.speed = STARTING_MOVE_DISTANCE
         self.cars = []
+        self.new_car_rate = NEW_CAR_CHANCES
         self.make_cars()
-
 
     def make_lanes(self):
         print(ROAD)
         lanes_num = (ROAD - 10) // (LANE_HEIGHT + LANES_DISTANCE)
         print(lanes_num)
-        starting_y = STARTING_POSITION[1] + LANES_DISTANCE + LANE_HEIGHT/2
+        starting_y = STARTING_POSITION[1] + LANES_DISTANCE + LANE_HEIGHT/2 + 10
         for lane in range(lanes_num):
             lane_y = starting_y + lane * (LANE_HEIGHT + LANES_DISTANCE)
             self.lanes.append(lane_y)
@@ -43,7 +43,11 @@ class CarManager():
 
 
     def make_cars(self):
-        if random.random() < NEW_CAR_CHANCES:
+        for car in self.cars:
+            if car.xcor() < -400:
+                self.cars.remove(car)
+        self.is_lane_free()
+        if random.random() < self.new_car_rate:
             free_lanes = np.setdiff1d(self.lanes, self.busy_lanes)
             self.cars.append(Car(free_lanes))
 
@@ -54,7 +58,9 @@ class CarManager():
 
 
     def speed_up(self):
+        increase_rate = MOVE_INCREMENT/self.speed
         self.speed += MOVE_INCREMENT
+        self.new_car_rate *= (1 + increase_rate)
         print(self.speed)
 
 class Car(Turtle):
